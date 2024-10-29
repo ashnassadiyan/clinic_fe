@@ -123,13 +123,12 @@ public class Appointment {
     }
 
 //    Appointment will be updated
-    public static Appointment updateAppointment(
-            HashMap<String, ArrayList<Appointment>> doctorsAppointments,
-            String doctorName, int appointmentId, Payment payment, Patient patient) {
-
+public static Appointment updateAppointment(
+        HashMap<String, ArrayList<Appointment>> doctorsAppointments,
+        String doctorName, int appointmentId, Payment payment, Patient patient) {
+    try {
         // Get the appointments for the doctor
         ArrayList<Appointment> appointments = doctorsAppointments.get(doctorName);
-
         // Check if the doctor exists in the map
         if (appointments != null) {
             // Iterate over the appointments
@@ -146,46 +145,63 @@ public class Appointment {
         } else {
             System.out.println("Doctor " + doctorName + " not found.");
         }
-        return null;
+    } catch (NullPointerException e) {
+        System.out.println("Null value encountered: " + e.getMessage());
+    } catch (Exception e) {
+        System.out.println("An error occurred while updating the appointment: " + e.getMessage());
     }
+    return null;
+}
 
+
+    // Complete the appointment
     public static void completeAppointment(
             HashMap<String, ArrayList<Appointment>> doctorsAppointments,
             Appointment selectedAppointment, Treatment treatment) {
-
-        // Print out treatment price
-        System.out.println("Treatment price: " + treatment.getPrice());
-        for (ArrayList<Appointment> appointments : doctorsAppointments.values()) {
-            for (Appointment appointment : appointments) {
-
-                if (appointment.getAppointmentId()==selectedAppointment.getAppointmentId()) {
-                    if (appointment.getPayment() != null) {
-                        appointment.getPayment().setTreatmentCharge(treatment.getPrice());
-                        appointment.setAppointmentStatus("Completed");
-                        appointment.setTreatment(treatment);
-
+        try {
+            // Print out treatment price
+            System.out.println("Treatment price: " + treatment.getPrice());
+            for (ArrayList<Appointment> appointments : doctorsAppointments.values()) {
+                for (Appointment appointment : appointments) {
+                    if (appointment.getAppointmentId() == selectedAppointment.getAppointmentId()) {
+                        if (appointment.getPayment() != null) {
+                            appointment.getPayment().setTreatmentCharge(treatment.getPrice());
+                            appointment.setAppointmentStatus("Completed");
+                            appointment.setTreatment(treatment);
+                        }
+                        System.out.println("Updated appointment ID: " + appointment.getAppointmentId() +
+                                " with treatment charge: " + treatment.getPrice() + " " +
+                                (appointment.getTreatment() == null ? "Not Treated" : appointment.getTreatment().getName()));
+                        return;
                     }
-                    System.out.println("Updated appointment ID: " + appointment.getAppointmentId() +
-                            " with treatment charge: " + treatment.getPrice()+"  "+appointment.getTreatment()==null?
-                            "Not Treated":appointment.getTreatment().getName());
-                    return;
                 }
             }
+            System.out.println("No appointment found with ID: " + selectedAppointment.getAppointmentId());
+        } catch (NullPointerException e) {
+            System.out.println("Encountered a null value: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An error occurred while completing the appointment: " + e.getMessage());
         }
-        System.out.println("No appointment found with ID: " + selectedAppointment.getAppointmentId());
     }
 
+
+    //    search appointments by consultation id
     public static ArrayList<Appointment> searchAppointmentsByDate(
             ArrayList<Appointment> appointments, int consultationId) {
         ArrayList<Appointment> foundAppointments = new ArrayList<>();
 
-        for (Appointment appointment : appointments) {
+        try {
+            for (Appointment appointment : appointments) {
+                int consultation = appointment.getConsultationId();
 
-            int consultation = appointment.getConsultationId();
-
-            if (consultationId==consultation) {
-                foundAppointments.add(appointment);
+                if (consultationId == consultation) {
+                    foundAppointments.add(appointment);
+                }
             }
+        } catch (NullPointerException e) {
+            System.out.println("Null value encountered in appointments list: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An error occurred while searching appointments: " + e.getMessage());
         }
         return foundAppointments;
     }
