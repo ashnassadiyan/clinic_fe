@@ -284,9 +284,23 @@ public class Main {
                         }
                     }
 
+                    String appointmentNumber;
                     if(accepted.equalsIgnoreCase("Y")){
-                        System.out.print("Please type the appointment number :");
-                        String appointmentNumber=scanner.nextLine();
+
+                        while (true) {
+                            System.out.print("Please type the appointment number :");
+                            appointmentNumber = scanner.nextLine();
+                            // checking the appointment is booked already
+                            ArrayList<Appointment> bookedAppointments=findAppointmentsByIdName(DoctorsAppointments,appointmentNumber);
+                            Appointment isItBooked= bookedAppointments.getFirst();
+
+                            if (!isItBooked.getAppointmentConfirmed()) {
+                                break;
+                            } else {
+                                System.out.println("Selected Appointment is not available , please select a different Appointment number");
+                            }
+                        }
+
                         System.out.print("Patient's Name :");
                         String name=scanner.nextLine();
                         System.out.print("Patient's Email :");
